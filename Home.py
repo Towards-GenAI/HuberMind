@@ -57,9 +57,13 @@ custom_style()
 st.sidebar.image('./src/logo.png')
 google_api_key = st.sidebar.text_input("Enter your GeminiPro API key:", type="password")
 
-llm = ChatGoogleGenerativeAI(model="gemini-pro", verbose=True, 
-                             temperature=0.2, google_api_key=google_api_key)
+llm= ChatGoogleGenerativeAI(model="gemini-pro", verbose=True, 
+                             temperature=0.2,verbose=True google_api_key=google_api_key)
 
+llm_flash=ChatGoogleGenerativeAI(model="gemini-1.5-flash",
+                           verbose=True,
+                           temperature=0.2,
+                           google_api_key=google_api_key)
 
 ##################################################################################################
 
