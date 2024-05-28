@@ -32,6 +32,10 @@ from fpdf import FPDF
 # from src.crews.task import research_task, insights_task, writer_task, format_task
 # from src.crews.crew import botimus_crew
 from src.components.navigation import footer, custom_style, page_config
+from src.crews.agents import *
+from src.crews.task import *
+from src.crews.crew import *
+from src.crews.tools import *
 ##################################################################################################
 ##################################################################################################
 # Configure logging
@@ -57,9 +61,13 @@ custom_style()
 st.sidebar.image('./src/logo.png')
 google_api_key = st.sidebar.text_input("Enter your GeminiPro API key:", type="password")
 
-llm = ChatGoogleGenerativeAI(model="gemini-pro", verbose=True, 
-                             temperature=0.2, google_api_key=google_api_key)
+llm= ChatGoogleGenerativeAI(model="gemini-pro", verbose=True, 
+                             temperature=0.2,google_api_key=google_api_key)
 
+llm_flash=ChatGoogleGenerativeAI(model="gemini-1.5-flash",
+                           verbose=True,
+                           temperature=0.2,
+                           google_api_key=google_api_key)
 
 ##################################################################################################
 
@@ -125,7 +133,7 @@ def main():
     if st.button("Start Blogging Crew"):
         if blog_topic:
             # result = tech_crew.kickoff()
-            result="Test"
+            
             st.write(result)
             
             # Create a PDF and write the output to it
