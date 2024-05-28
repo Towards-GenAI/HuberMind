@@ -28,8 +28,9 @@ from langchain_core.messages import HumanMessage
 from langchain_community.tools import DuckDuckGoSearchRun
 search_tool = DuckDuckGoSearchRun()
 #Importing from SRC
-from src.crews.agents import researcher, insight_researcher, writer, formater
-from src.crews.task import research_task, insights_task, writer_task, format_task
+from src.crews.agents import *
+from src.crews.task import *
+
 
 
 ##################################################################################################
@@ -55,19 +56,30 @@ else:
 llm = ChatGoogleGenerativeAI(model="gemini-pro", verbose=True, 
                              temperature=0.2, google_api_key=google_api_key)
 
-
-
-
-
-
+llm_flash=ChatGoogleGenerativeAI(model="gemini-1.5-flash",
+                           verbose=True,
+                           temperature=0.2,
+                           google_api_key=google_api_key)
 
 
 ##################################################################################################
 
-# Instantiate your Botimus Crew
-botimus_crew = Crew(
-  agents=[researcher, insight_researcher, writer, formater],
-  tasks=[research_task, insights_task, writer_task, format_task],
-  process=Process.sequential  # Tasks will be executed one after the other
+
+#HuberMin crew #1
+
+huber_crew=Crew(
+  agents=[channel_researcher, blog_writer, blog_rewiewer],
+  tasks=[research_task, write_task, edit_translate_task],
+  process=Process.sequential,  # Tasks will be executed one after the other
+  memory=True,
+  cache=True,
+  max_rpm=100,
+  share_crew=True
 )
+
+## start the task execution process with enhanced feedback
+result=huber_crew.kickoff(inputs={'topic':'Dr. Matt Walker: Using Sleep to Improve Learning, Creativity & Memory | Huberman Lab Guest Series'})
+
+
+
 

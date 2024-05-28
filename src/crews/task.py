@@ -29,6 +29,7 @@ from langchain_community.tools import DuckDuckGoSearchRun
 search_tool = DuckDuckGoSearchRun()
 #Importing from SRC
 from src.crews.agents import *
+from src.crews.tools import *
 
 
 
@@ -62,25 +63,44 @@ llm = ChatGoogleGenerativeAI(model="gemini-pro", verbose=True,
 
 
 
+
+
 ##################################################################################################
 
-# Tasks
+#fomat the text in markdown with clear headline and paragraphes
+## Research Task
 research_task = Task(
-  description='Identify the next big trend in AI by searching internet',
-  agent=researcher
+  description=
+    "Identify the video {topic}."
+    "Get detailed information about the video from the channel video."
+    "Get data like views, likes, comments, duration, description etc."
+  ,
+  expected_output='A comprehensive 5 paragraphs long report based on the {topic} of video content.',
+  tools=[serper_tool],
+  agent=channel_researcher
 )
 
-insights_task = Task(
-  description='Identify few key insights from the data in points format. Dont use any tool',
-  agent=insight_researcher
+# Writing task with language model configuration
+write_task = Task(
+  description=
+    "get the info from the youtube channel on the topic {topic}."
+  ,
+  expected_output='Summarize the info from the Huberman youtube channel video on the topic{topic} and create the content for the blog',
+  tools=[serper_tool],
+  agent=blog_writer,
+  async_execution=False,
+
 )
 
-writer_task = Task(
-  description='Write a short blog post with sub headings. Dont use any tool',
-  agent=writer
-)
 
-format_task = Task(
-  description='Convert the text into markdown format. Dont use any tool',
-  agent=formater
+# Editor & Translator
+edit_translate_task = Task(
+  description=
+    "Edit the blog and Transalte in French on {topic}."
+  ,
+  expected_output='Edit the blog writen Huberman youtube channel video on the topic{topic} and create the content for the blog in French to',
+  tools=[serper_tool],
+  agent=blog_rewiewer,
+  async_execution=False,
+  output_file='new-blog-post.md'  # Example of output customization
 )

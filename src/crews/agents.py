@@ -28,7 +28,7 @@ from langchain_core.messages import HumanMessage
 from langchain_community.tools import DuckDuckGoSearchRun
 search_tool = DuckDuckGoSearchRun()
 #Importing from SRC
-
+from src.crews.tools import *
 
 
 
@@ -55,51 +55,65 @@ else:
 llm = ChatGoogleGenerativeAI(model="gemini-pro", verbose=True, 
                              temperature=0.2, google_api_key=google_api_key)
 
-
-
-
-
-
+llm_flash=ChatGoogleGenerativeAI(model="gemini-1.5-flash",
+                           verbose=True,
+                           temperature=0.2,
+                           google_api_key=google_api_key)
 
 
 ##################################################################################################
 
-# Create a researcher agent
-researcher = Agent(
-  role='Senior Researcher',
-  goal='Discover groundbreaking technologies',
-  backstory='A curious mind fascinated by cutting-edge innovation and the potential to change the world, you know everything about tech.',
-  verbose=True,
-  tools=[search_tool],
-  allow_delegation=False,
-  llm=llm 
+
+
+
+
+# Creating a senior researcher agent with memory and verbose mode
+
+channel_researcher=Agent(
+    role="Senior Researcher for Youtube channels",
+    goal='get the relevant video transcription for the topic {topic} from the provided Huberman youtbe channel channel',
+    verboe=True,
+    memory=True,
+    backstory=(
+       "Expert in understanding videos in Neural, Mind, Dopamine, Adhd and psychology of mind and providing suggestion" 
+    ),
+    tools=[serper_tool],
+    allow_delegation=True, llm=llm
+  )
+   
+
+
+
+blog_writer=Agent(
+    role='Blog Writer based on youtbe vidoe transcript',
+    goal='Narrate compelling research stories about the video {topic} from Huberman youtbe channel',
+    verbose=True,
+    memory=True,
+    backstory=(
+        "With a flair for simplifying complex topics, you craft"
+        "engaging narratives that captivate and educate, bringing new"
+        "discoveries to light in an accessible manner."
+        "Write in a clear and concise manner."
+        "Tone should be friendly, funny, and engaging with attention to details"
+    ),
+    tools=[serper_tool],
+    allow_delegation=True,llm=llm
+
+
 )
 
-insight_researcher = Agent(
-  role='Insight Researcher',
-  goal='Discover Key Insights',
-  backstory='You are able to find key insights from the data you are given.',
-  verbose=True,
-  allow_delegation=False,
-  llm=llm 
-)
+blog_rewiewer=Agent(
+    role='Blog rewiewer based on blo wrtten',
+    goal='rewiewer the blog written on {topic} from Huberman youtbe channel, in professional style',
+    verbose=True,
+    memory=True,
+    backstory=(
+        "rewiewer the blog in NY times style"
+        "rewiewer the blog in professional style to match according to {topic} in Huberman youtbe channel"
+        "translate into French and write below English version of the blog"
+    ),
+    tools=[serper_tool],
+    allow_delegation=False,llm=llm
 
-writer = Agent(
-  role='Tech Content Strategist',
-  goal='Craft compelling content on tech advancements',
-  backstory="""You are a content strategist known for 
-  making complex tech topics interesting and easy to understand.""",
-  verbose=True,
-  allow_delegation=False,
-  llm=llm 
-)
 
-formater = Agent(
-  role='Markdown Formater',
-  goal='Format the text in markdown',
-  backstory='You are able to convert the text into markdown format',
-  verbose=True,
-  allow_delegation=False,
-  llm=llm 
 )
-
